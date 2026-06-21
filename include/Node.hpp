@@ -197,8 +197,7 @@ class Node {
     }
 
     virtual void deliver(const void *payload, int length) {
-        int sender = *reinterpret_cast<const int *>(payload);
-        Debug::Trace("Node ", id_, " delivers message from ", sender);
+        Debug::Trace("Node ", id_, " delivers message of length ", length);
     }
 
     void sendPropose(uintmax_t origin, uintmax_t msgId, uintmax_t order) {
