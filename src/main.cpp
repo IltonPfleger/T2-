@@ -12,7 +12,17 @@ using namespace Atomic;
 class Payload {
   public:
     Payload(int id) {
-        Node _(id);
+        Node node(id);
+
+        usleep(500000);
+
+        for (int i = 0; i < 10; i++) {
+            int value = id * 100 + i;
+
+            usleep(rand() % 100000);
+
+            node.broadcast(&value, sizeof(value));
+        }
         while (1)
             ;
     }
