@@ -21,7 +21,7 @@ $(BUILD)/%.o: $(HERE)/src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD)
+	rm -rf $(BUILD) logs seqs
 
 -include $(DEPENDENCIES)
 

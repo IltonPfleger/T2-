@@ -24,15 +24,18 @@ class AuctionNode : public Atomic::Node {
           winnerId_(-1) {}
 
     void submitBid(int amount, int round) {
+        // monta o struct com os dados do lance
         Bid bid;
         bid.bidderId = id_;
         bid.amount   = amount;
         bid.round    = round;
 
+        // imprime antes de enviar
         std::printf("[P%d] Enviando lance: R$ %d | tentativa %d\n",
                     id_, amount, round);
         std::fflush(stdout);
 
+        // passa pra camada de broadcast do Node
         broadcast(&bid, sizeof(Bid));
     }
 
