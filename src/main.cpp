@@ -3,28 +3,47 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <time.h>
 
-#include <Node.hpp>
+#include <AuctionNode.hpp>
 #include <Traits.hpp>
 
 using namespace Atomic;
+using namespace Auction;
 
 class Payload {
   public:
     Payload(int id) {
-        Node node(id);
+        srand(time(nullptr) + id * 100);
 
-        usleep(500000);
+        AuctionNode node(id);
 
-        for (int i = 0; i < 10; i++) {
-            int value = id * 100 + i;
+        // Espera todos os processos criarem seus sockets.
+        usleep(1000000);
 
-            usleep(rand() % 100000);
+        // Lances pré-definidos para facilitar a demonstração.
+        int bids[Traits<Topology>::NumberOfNodes][3] = {
+            {100, 180, 250},
+            {120, 210, 300},
+            {150, 240, 330},
+            {130, 270, 360},
+            {160, 290, 390}
+        };
 
-            node.broadcast(&value, sizeof(value));
+        for (int round = 0; round < 3; round++) {
+            usleep(200000 + (rand() % 700000));
+
+            int amount = bids[id][round];
+
+            node.submitBid(amount, round + 1);
         }
-        while (1)
-            ;
+
+        sleep(8);
+
+        std::printf("[P%d] Finalizando participante do leilão.\n", id);
+        std::fflush(stdout);
+
+        _exit(0);
     }
 
     ~Payload() = default;
@@ -38,7 +57,6 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < Traits<Topology>::NumberOfNodes; i++) {
         pid_t pid = fork();
 
-        // CHILD - PAYLOAD NODE
         if (pid == 0) {
             return Payload(i);
         }
