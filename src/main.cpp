@@ -18,10 +18,9 @@ class Payload {
 
         AuctionNode node(id);
 
-        // Espera todos os processos criarem seus sockets.
         usleep(1000000);
 
-        // Lances pré-definidos para facilitar a demonstração.
+        // Lances definidos apenas para facilitar a demonstracao.
         int bids[Traits<Topology>::NumberOfNodes][3] = {
             {100, 180, 250},
             {120, 210, 300},
