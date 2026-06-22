@@ -1,0 +1,61 @@
+New Node 1!
+[P1] Rodada 0 -> lance 429
+[P1] Enviando lance: R$ 429 | tentativa 0
+[P1] CHEGADA | msg de P3 chegou
+[P1] ENTREGA #01 | Participante P3 deu lance R$ 254 | Maior atual: R$ 254 por P3
+[P1] CHEGADA | msg de P2 chegou
+[P1] Rodada 1 -> lance 208
+[P1] Enviando lance: R$ 208 | tentativa 1
+[P1] CHEGADA | msg de P1 chegou
+[P1] CHEGADA | msg de P4 chegou
+[P1] CHEGADA | msg de P0 chegou
+[P1] ENTREGA #02 | Participante P1 deu lance R$ 429 | Maior atual: R$ 429 por P1
+[P1] ENTREGA #03 | Participante P2 deu lance R$ 107 | Maior atual: R$ 429 por P1
+[P1] ENTREGA #04 | Participante P0 deu lance R$ 208 | Maior atual: R$ 429 por P1
+[P1] ENTREGA #05 | Participante P4 deu lance R$ 443 | Maior atual: R$ 443 por P4
+[P1] Rodada 2 -> lance 123
+[P1] Enviando lance: R$ 123 | tentativa 2
+[P1] CHEGADA | msg de P1 chegou
+[P1] ENTREGA #06 | Participante P1 deu lance R$ 208 | Maior atual: R$ 443 por P4
+[P1] CHEGADA | msg de P0 chegou
+[P1] CHEGADA | msg de P3 chegou
+[P1] CHEGADA | msg de P2 chegou
+[P1] ENTREGA #07 | Participante P3 deu lance R$ 250 | Maior atual: R$ 443 por P4
+[P1] ENTREGA #08 | Participante P2 deu lance R$ 358 | Maior atual: R$ 443 por P4
+[P1] ENTREGA #09 | Participante P0 deu lance R$ 270 | Maior atual: R$ 443 por P4
+[P1] CHEGADA | msg de P4 chegou
+[P1] CHEGADA | msg de P3 chegou
+[P1] Rodada 3 -> lance 399
+[P1] Enviando lance: R$ 399 | tentativa 3
+[P1] CHEGADA | msg de P1 chegou
+[P1] ENTREGA #10 | Participante P1 deu lance R$ 123 | Maior atual: R$ 443 por P4
+[P1] ENTREGA #11 | Participante P4 deu lance R$ 338 | Maior atual: R$ 443 por P4
+[P1] ENTREGA #12 | Participante P3 deu lance R$ 312 | Maior atual: R$ 443 por P4
+[P1] CHEGADA | msg de P2 chegou
+[P1] CHEGADA | msg de P0 chegou
+[P1] CHEGADA | msg de P3 chegou
+[P1] CHEGADA | msg de P1 chegou
+[P1] CHEGADA | msg de P4 chegou
+[P1] CHEGADA | msg de P0 chegou
+[P1] Rodada 4 -> lance 464
+[P1] Enviando lance: R$ 464 | tentativa 4
+[P1] CHEGADA | msg de P2 chegou
+[P1] CHEGADA | msg de P3 chegou
+[P1] CHEGADA | msg de P4 chegou
+[P1] CHEGADA | msg de P1 chegou
+[P1] CHEGADA | msg de P0 chegou
+[P1] CHEGADA | msg de P2 chegou
+[P1] ENTREGA #13 | Participante P0 deu lance R$ 494 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #14 | Participante P3 deu lance R$ 329 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #15 | Participante P2 deu lance R$ 446 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #16 | Participante P1 deu lance R$ 399 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #17 | Participante P4 deu lance R$ 377 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #18 | Participante P0 deu lance R$ 237 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #19 | Participante P2 deu lance R$ 137 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #20 | Participante P3 deu lance R$ 236 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #21 | Participante P1 deu lance R$ 464 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #22 | Participante P4 deu lance R$ 187 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #23 | Participante P2 deu lance R$ 277 | Maior atual: R$ 494 por P0
+[P1] ENTREGA #24 | Participante P0 deu lance R$ 366 | Maior atual: R$ 494 por P0
+[P1] CHEGADA | msg de P4 chegou
+[P1] ENTREGA #25 | Participante P4 deu lance R$ 358 | Maior atual: R$ 494 por P0

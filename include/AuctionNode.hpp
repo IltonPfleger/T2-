@@ -23,27 +23,22 @@ class AuctionNode : public Atomic::Node {
           highestBid_(0),
           winnerId_(-1) {}
 
-    void submitBid(int amount, int round) {
-        // monta o struct com os dados do lance
+    void bid(int amount, int round) {
         Bid bid;
         bid.bidderId = id_;
         bid.amount   = amount;
         bid.round    = round;
 
-        // imprime antes de enviar
-        std::printf("[P%d] Enviando lance: R$ %d | tentativa %d\n",
-                    id_, amount, round);
+        std::printf("[P%d] Enviando lance: R$ %d | tentativa %d\n", id_, amount, round);
         std::fflush(stdout);
 
-        // passa pra camada de broadcast do Node
         broadcast(&bid, sizeof(Bid));
     }
 
   private:
     void deliver(const void *payload, int length) override {
         if (length != sizeof(Bid)) {
-            std::printf("[P%d] Mensagem inválida recebida. Tamanho: %d\n",
-                        id_, length);
+            std::printf("[P%d] Mensagem inválida recebida. Tamanho: %d\n", id_, length);
             std::fflush(stdout);
             return;
         }
@@ -60,15 +55,8 @@ class AuctionNode : public Atomic::Node {
             winnerId_   = bid.bidderId;
         }
 
-        std::printf(
-            "[P%d] ENTREGA #%02d | Participante P%d deu lance R$ %d | Maior atual: R$ %d por P%d\n",
-            id_,
-            deliverySequence_,
-            bid.bidderId,
-            bid.amount,
-            highestBid_,
-            winnerId_
-        );
+        std::printf("[P%d] ENTREGA #%02d | Participante P%d deu lance R$ %d | Maior atual: R$ %d por P%d\n", id_,
+                    deliverySequence_, bid.bidderId, bid.amount, highestBid_, winnerId_);
 
         std::fflush(stdout);
     }
@@ -81,6 +69,6 @@ class AuctionNode : public Atomic::Node {
     std::vector<Bid> history_;
 };
 
-}
+} // namespace Auction
 
 #endif

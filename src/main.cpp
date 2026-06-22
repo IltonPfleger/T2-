@@ -1,9 +1,12 @@
+#include <fstream>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
+
+#include <string>
 
 #include <AuctionNode.hpp>
 #include <Traits.hpp>
@@ -11,105 +14,92 @@
 using namespace Atomic;
 using namespace Auction;
 
-class Payload {
+class Launcher {
   public:
-    Payload(int id) {
+    Launcher(int id) {
+        srand(time(nullptr) ^ (getpid() << 16) ^ id);
 
-        // semente é diferente por processo pra garantir
-        // delays aleatórios independentes entre nós
-        srand(time(nullptr) + id * 100);
-        
-        // cria o nó do leilão com o ID desse processo
-        // (abre socket e sobe a thread receptora)
         AuctionNode node(id);
 
-        // espera 1 segundo pra todos os nós terminarem de inicializar
-        // antes de qualquer lance ser enviado
-        usleep(1000000);
+        usleep(5'000'000);
 
-        // tabela fixa de lances: cada linha é um nó, cada coluna é uma rodada
-        // ex:
-        // bids[0] = {100, 180, 250} → P0 lança 100, depois 180, depois 250
-        // bids[1] = {120, 210, 300} → P1 lança 120, depois 210, depois 300
-        int bids[Traits<Topology>::NumberOfNodes][3] = {
-            {100, 180, 250},
-            {120, 210, 300},
-            {150, 240, 330},
-            {130, 270, 360},
-            {160, 290, 390}
-        };
+        for (int round = 0; round < 5; round++) {
+            int bid = 100 + rand() % 401;
 
-        // todos enviam sem delay
-        for (int round = 0; round < 3; round++) {
-            node.submitBid(bids[id][round], round + 1);
+            std::printf("[P%d] Rodada %d -> lance %d\n", id, round, bid);
+            std::fflush(stdout);
+
+            node.bid(bid, round);
         }
 
-        // espera 8 segundos pra garantir que todas 
-        // as mensagens em voo sejam entregues antes de finalizar
-        sleep(8);
+        usleep(5'000'000);
 
-        std::printf("[P%d] Finalizando participante do leilão.\n", id);
         std::fflush(stdout);
 
-        _exit(0);
+        exit(0);
     }
 
-    ~Payload() = default;
+    ~Launcher() = default;
 
     operator int() { return 0; }
 };
 
-int main() {
+std::vector<std::string> ENTREGA(int id) {
+    std::vector<std::string> sequencia;
+    std::ifstream arquivo("logs/P" + std::to_string(id) + ".log");
+    std::string linha;
 
-    // cria as pastas de logs caso ainda não existam
-    system("mkdir -p logs seqs");
-
-    // array pra guardar os PIDs
-    pid_t pids[Traits<Topology>::NumberOfNodes];
-
-    // cria N processos filhos via fork()
-    // id -> no construtor do payload
-    // o pai nunca entra no if, só coleta o PID e continua o loop
-    for (int i = 0; i < Traits<Topology>::NumberOfNodes; i++) {
-        pid_t pid = fork();
-        
-        // filho entra aqui
-        if (pid == 0) {
-
-            // redireciona o stdcout do filho pro pra arquivos log
-            char logfile[64];
-            snprintf(logfile, sizeof(logfile), "logs/P%d.log", i);
-            freopen(logfile, "w", stdout);
-
-            return Payload(i);
+    while (std::getline(arquivo, linha)) {
+        size_t pos = linha.find("ENTREGA");
+        if (pos != std::string::npos) {
+            sequencia.push_back(linha.substr(pos));
+        }
     }
-        
-        // pai coleta o PID e segue o loop
+    return sequencia;
+}
+
+int main() {
+    constexpr int N = Traits<Topology>::NumberOfNodes;
+
+    system("mkdir -p logs");
+
+    pid_t pids[N];
+
+    for (int i = 0; i < N; i++) {
+        pid_t pid = fork();
+
+        if (pid == 0) {
+            char cmd[256];
+            snprintf(cmd, sizeof(cmd), "tee logs/P%d.log", i);
+            FILE *tee = popen(cmd, "w");
+
+            if (tee != nullptr) {
+                dup2(fileno(tee), STDOUT_FILENO);
+            }
+
+            return Launcher(i);
+        }
+
         pids[i] = pid;
     }
 
-    // espera todos terminarem
-    for (pid_t pid : pids) {
-        waitpid(pid, nullptr, 0);
+    for (int i = 0; i < N; i++) {
+        waitpid(pids[i], nullptr, 0);
     }
 
-    // PARA DEMONSTRAR QUE TODAS SÃO IGUAIS
-    // lê cada log (remove sem o [PX])
-    system("grep 'ENTREGA' logs/P0.log | sed 's/\\[P[0-9]*\\] //' > seqs/seq0.txt");
-    system("grep 'ENTREGA' logs/P1.log | sed 's/\\[P[0-9]*\\] //' > seqs/seq1.txt");
-    system("grep 'ENTREGA' logs/P2.log | sed 's/\\[P[0-9]*\\] //' > seqs/seq2.txt");
-    system("grep 'ENTREGA' logs/P3.log | sed 's/\\[P[0-9]*\\] //' > seqs/seq3.txt");
-    system("grep 'ENTREGA' logs/P4.log | sed 's/\\[P[0-9]*\\] //' > seqs/seq4.txt");
-
-    // Compara todos com P0
     printf("\n=== VERIFICANDO ORDEM DE ENTREGA ===\n");
-    int diff01 = system("diff -q seqs/seq0.txt seqs/seq1.txt");
-    int diff02 = system("diff -q seqs/seq0.txt seqs/seq2.txt");
-    int diff03 = system("diff -q seqs/seq0.txt seqs/seq3.txt");
-    int diff04 = system("diff -q seqs/seq0.txt seqs/seq4.txt");
 
-    // printa a diferença (DEVEM SER IGUAIS)
-    if (diff01 == 0 && diff02 == 0 && diff03 == 0 && diff04 == 0) {
+    bool ok        = true;
+    auto reference = ENTREGA(0);
+
+    for (int i = 1; i < N; i++) {
+        if (ENTREGA(i) != reference) {
+            printf("Diferença encontrada entre P0 e P%d\n", i);
+            ok = false;
+        }
+    }
+
+    if (ok) {
         printf("ORDEM IDENTICA EM TODOS OS NOS — Atomic Broadcast OK\n");
     } else {
         printf("ORDENS DIFERENTES — FALHA\n");
